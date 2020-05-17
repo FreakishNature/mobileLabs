@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MobileDev2</string>
+    <string name="shared_prefs">SHARED_PREFS</string>
+    <string name="URL">http://192.168.0.190:8081</string>
 </resources>

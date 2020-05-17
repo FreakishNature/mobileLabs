@@ -1,5 +1,8 @@
 package com.example.mobiledev2
 
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -15,10 +18,8 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
 import org.json.JSONObject
 
-class MainActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
     var gson = Gson()
-    var url = "http://192.168.0.24:8081"
-//    lateinit var token : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +30,8 @@ class MainActivity : AppCompatActivity() {
         var passwordInput = findViewById<TextInputEditText>(R.id.passwordInput)
 
         loginButton.setOnClickListener {
+            var url = getString(R.string.URL)
+            var sharedPrefs: SharedPreferences = getSharedPreferences(getString(R.string.shared_prefs), Context.MODE_PRIVATE)
 
             var body = gson.toJson(
                 LoginData(
@@ -43,10 +46,17 @@ class MainActivity : AppCompatActivity() {
                 Request.Method.POST, "${url}/login",JSONObject(body),
                 Response.Listener<JSONObject> { response ->
                     val token = response.get("token").toString()
+                    Log.i("Response : " , token);
 
+                    val projectActivity = Intent(this, ListOfProjectsActivity::class.java)
+
+                    var editor = sharedPrefs.edit()
+                    editor.putString("token",token)
+                    editor.apply()
+
+                    startActivity(projectActivity)
                 },
                 Response.ErrorListener { error -> Log.i("response", error.toString() ) })
-
 
             queue.add(stringRequest)
         }
